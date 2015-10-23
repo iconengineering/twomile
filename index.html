@@ -286,14 +286,14 @@ var map = L.mapbox.map('map',null,{
       .addControl(L.mapbox.geocoderControl('mapbox.places-v1'))
       .setView([40.036,-105.283], 15);
 
-var layers = {
+var baseLayers = {
       Dark: L.mapbox.tileLayer('iconeng.lmfhipka'),
       Streets: L.mapbox.tileLayer('mapbox.streets'),
       Satellite: L.mapbox.tileLayer('mapbox.satellite')
   };
 
-  layers.Dark.addTo(map);
-  L.control.layers(layers).addTo(map);
+  baseLayers.Dark.addTo(map);
+  L.control.layers(baseLayers).addTo(map);      
 
 var sfha = null;
 var sfha_proposed = null;
@@ -458,7 +458,7 @@ floodextentsLink.onclick = function(e){
 var layers = document.getElementById('myNavmenu');
 
 waitLayer(L.mapbox.tileLayer('iconeng.2Mile_Contours'), 'Contours', 3);
-waitLayer(L.mapbox.tileLayer('iconeng.2mile_flo2d'), 'Flo2d Model', 0);
+waitLayer(L.mapbox.tileLayer('iconeng.2mile_flo2d'), 'Flo2d Model', 2);
 
 
 function addLayer(layer, name, zIndex) {
