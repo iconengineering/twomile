@@ -1,0 +1,530 @@
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Twomile</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jPushMenu.css" />
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+<style>
+  body { margin:0; padding:0;font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;}
+  #main{margin:0; padding:0;width:100%;}
+  #map { position:fixed; top:57px; bottom:0px; width:100%;}
+  h3 {margin-top: 15px;margin-bottom:15px;font-weight: 600;}
+  a:focus {
+  outline: thin dotted;
+}
+
+a:link,
+a:active,
+a:visited,
+a:hover {
+  outline: 0;
+  text-decoration: none;
+}
+
+a:link {
+  color:#333;
+}
+</style>
+</head>
+<body>
+ 
+  <script src='https://cdn.firebase.com/js/client/1.1.1/firebase.js'></script>
+  <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
+
+<style>
+
+.navbar{z-index:10;margin-bottom:0;}
+
+.map-tooltip {
+        right:150px;
+        box-shadow:0px 0px 4px 2px rgba(0%,0%,0%,0.25);}
+
+button {
+  display:block;
+  float:left;
+  margin-left: 15px;
+  position: relative;
+  margin-right: 15px;
+  padding: 9px 10px;
+  margin-top: 11px;
+  margin-bottom: 11px;
+  background-color:transparent;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  }
+  .icon-bar{
+    background-color: #888;
+    display: block;
+    width: 22px;
+    height: 2px;
+    border-radius: 1px;
+  }
+  .icon-bar+.icon-bar{
+    margin-top: 4px;
+  }
+  #myNavmenu{z-index:1001;}
+
+  .leaflet-popup-close-button { display:none; }
+fieldset { width:240px;}
+.form-group {margin-bottom:5px;}
+#add-button {margin:0;color:#fff;background-color:#385777;border-color:#324E6B;}
+#add-button:hover{background-color:#607992;}
+
+.instructions {
+  position:absolute;
+  top:5px;
+  right:0px;
+  z-index:100;
+  opacity:.9;
+}
+.panel
+{
+    position: relative;
+}
+
+.panel-default > .panel-leftheading
+{
+    color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+}
+
+.panel-primary > .panel-leftheading
+{
+    color: #fff;
+    background-color: #428bca;
+    border-color: #428bca;
+}
+
+.panel-success > .panel-leftheading
+{
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.panel-info > .panel-leftheading
+{
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+.panel-warning > .panel-leftheading
+{
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+
+.panel-danger > .panel-leftheading
+{
+    color: #fff;
+    background-color: #d2640a;
+    border-color: #d2640a !important;
+}
+
+.panel-danger
+{
+    border-color: #d2640a !important;
+}
+
+.panel-leftheading
+{
+    width: 42px;
+    padding: 10px 15px;
+    border-right: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-top-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    float: left;
+    height: 100%;
+    position: absolute;
+}
+
+.panel-lefttitle
+{
+    margin-top: 0 !important;
+    margin-bottom: 0!important;
+    margin-left: 15px!important;
+    font-size: 16px;
+    color: inherit;
+    -webkit-transform: rotate(90deg);
+    -webkit-transform-origin: left top;
+    -moz-transform: rotate(90deg);
+    -moz-transform-origin: left top;
+    -ms-transform: rotate(90deg);
+    -ms-transform-origin: left top;
+    -o-transform: rotate(90deg);
+    -o-transform-origin: left top;
+    transform: rotate(90deg);
+    transform-origin: left top;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.panel-rightbody
+{
+    float: left;
+    margin-left: 45px;
+    padding: 15px;
+}
+
+.legend-main{
+  position:absolute;
+  bottom:5px;
+  right:0px;
+  z-index:100;
+  opacity:.95;
+}
+.legend-box{
+  background-color:#999;
+  color:#fff;
+}
+.legend-box a{color:orange;}
+.legend label,
+    .legend span {
+        display:block;
+        float:left;
+        height:15px;
+        width:32px;
+        text-align:center;
+        font-size:9px;
+        color:#808080;
+  }
+  .legend span{margin-right:19px;opacity:.7;}
+  .legend img{opacity:.5;}
+  .alt li span {
+    display: block;
+    float: left;
+    height: 4px;
+    width: 30px;
+    margin-right: 21px;
+    margin-top:6px;
+    margin-left: 0;
+    vertical-align:middle;
+    }
+  ul {
+  list-style-type:none;
+  }  
+  .xs-legend{
+    background-color:#999;
+    color:#fff;
+  }
+  .small-header{padding-top:10px;}
+
+</style>
+
+<nav id="myNavmenu" class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left">
+    
+    <div class="hidden-md hidden-lg xs-legend col-sm-12">
+    
+      <b>Legend:</b>
+        <ul class='legend clearfix'>Existing Conditions
+              <li><span style='background:tomato;'></span> High Hazard Area (2d)</li>
+              <li><span style='background:teal;'></span> Floodway</li>
+              <li><span style='background:cyan;'></span> Zone AE</li>
+              <li><span style='background:cadetblue;'></span> Zone AO</li>
+              <li><span style='background:orange;'></span> Zone X</li>
+            </ul>
+              <small>Source: <a href="http://www.iconeng.com">ICON Engineering</a></small>
+    </div>  
+    <h3>Layers</h3>
+    <a class="active" id="sfhaLink" href="#">Effective SFHA</a>
+    <a class="" id="sfha_proposedLink" href="#">Existing Conditions SFHA</a>
+    <a class="" id="floodextentsLink" href="#">Flooding Extents</a>
+</nav>
+<div id='main'>
+<div class="container-fluid">
+  <div class="navbar navbar-default navbar-top">
+  <button type="button" class="toggle-menu menu-left push-body">
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
+  <div class="hidden-xs"><h3>City of Boulder - Twomile Canyon Creek</h3></div>
+  <div class="visible-xs small-header"><h6>City of Boulder - Twomile Canyon Creek</h6></div>
+  </div>
+ 
+<div id='map'>
+  <div class="visible-md visible-lg">
+    <div class="bs-docs-section col-md-3 legend-main">
+     <div class="panel panel-info  legend-box">
+        <div class="panel-leftheading">
+            <h3 class="panel-lefttitle">Legend</h3>
+        </div>
+        <div class="panel-rightbody">
+            <ul class='legend clearfix'>Existing Conditions
+              <li><span style='background:tomato;'></span> High Hazard Area (2d)</li>
+              <li><span style='background:teal;'></span> Floodway</li>
+              <li><span style='background:cyan;'></span> Zone AE</li>
+              <li><span style='background:cadetblue;'></span> Zone AO</li>
+              <li><span style='background:orange;'></span> Zone X</li>
+            </ul>
+              <small>Source: <a href="http://www.iconeng.com">ICON Engineering</a></small>
+        </div><div class="clearfix">
+          </div>
+      </div>
+  </div>
+</div>
+</div>
+</div>
+</div> 
+<script>
+L.mapbox.accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJQVEItMndNIn0.OGqDLfQCZhMzdgYViGKHGw';
+
+var map = L.mapbox.map('map','iconeng.lmfhipka',{
+      infoControl: true,
+      maxZoom:19
+    })
+      .addControl(L.mapbox.geocoderControl('mapbox.places-v1'))
+      .setView([40.036,-105.283], 15);
+
+var sfha = null;
+var sfha_proposed = null;
+var highhazard = null;
+var floodextents = null;
+var cartoDBUsername = "ebendennis";
+var sfhaQuery = "SELECT * FROM table_2mile_sfha";
+var sfha_proposedQuery = "SELECT * FROM table_2mile_sfha_proposed";
+var highhazardQuery = "SELECT * FROM table_2mile_highhazard";
+var floodextentsQuery = "SELECT * FROM table_2mile_floodextents";
+
+function sfhaStyle(feature){
+  switch (feature.properties.zonedesc) {
+    case '500 Year': return {fillColor: 'peru', fillOpacity:.6, weight: 1, color: '#eee'};
+    case '100 Year': return {fillColor: 'skyblue', fillOpacity:.6, weight: 1, color: '#eee'};
+  }
+  return{
+    fillOpacity: 0,
+    opacity:0,
+    weight: 0,
+    clickable: false
+  }
+};
+
+function sfha_proposedStyle(feature){
+  switch (feature.properties.zone) {
+    case 'Floodway': return {fillColor: 'teal', fillOpacity:.6, weight: 1, color: '#eee'};
+    case 'AE': return {fillColor: 'cyan', fillOpacity:.6, weight: 1, color: '#eee'};
+    case 'AO 1 Foot': return {fillColor: 'cadetblue', fillOpacity:.6, weight: 1, color: '#eee'};
+    case 'AO 2 Foot': return {fillColor: 'cadetblue', fillOpacity:.6, weight: 1, color: '#eee'};
+    case 'X': return {fillColor: 'orange', fillOpacity:.6, weight: 1, color: '#eee'};
+  }
+  return{
+    fillOpacity: 0,
+    opacity:0,
+    weight: 0,
+    clickable: false
+  }
+};
+
+function highhazardStyle(feature){
+  return{
+    fillOpacity:0.8,
+    fillColor: 'tomato',
+    weight:1,
+    color:'#ac0000',
+    clickable:false
+  }
+}
+
+function floodextentsStyle(feature){
+  return{
+    fillOpacity:0.8,
+    fillColor: 'greenyellow',
+    weight:2.5,
+    color:'chartreuse',
+    clickable:false
+  }
+}
+
+function getsfha(){
+  if(map.hasLayer(sfha)){
+    map.removeLayer(sfha);
+  };
+  $.getJSON("https://"+cartoDBUsername+".cartodb.com/api/v2/sql?format=GeoJSON&q="+ sfhaQuery, function(data){
+    sfha = L.geoJson(data,{
+      style: sfhaStyle,
+      onEachFeature: function (feature, layer) {
+        layer.bindPopup("<h3>" + feature.properties.zonedesc + "</h3>");
+      }
+    }).addTo(map);
+  });
+};
+
+function getsfha_proposed(){
+  if(map.hasLayer(sfha_proposed)){
+    map.removeLayer(sfha_proposed);
+  };
+  $.getJSON("https://"+cartoDBUsername+".cartodb.com/api/v2/sql?format=GeoJSON&q="+ sfha_proposedQuery, function(data){
+    sfha_proposed = L.geoJson(data,{
+      style: sfha_proposedStyle,
+      onEachFeature: function (feature, layer) {
+        layer.bindPopup("<h3>Zone " + feature.properties.zone + "</h3>");
+      }
+    });
+  });
+};
+
+function gethighhazard(){
+  if(map.hasLayer(highhazard)){
+    map.removeLayer(highhazard);
+  };
+  $.getJSON("https://"+cartoDBUsername+".cartodb.com/api/v2/sql?format=GeoJSON&q="+ highhazardQuery, function(data){
+    highhazard = L.geoJson(data,{
+      style: highhazardStyle
+    });
+  });
+};
+
+function getfloodextents(){
+  if(map.hasLayer(floodextents)){
+    map.removeLayer(floodextents);
+  };
+  $.getJSON("https://"+cartoDBUsername+".cartodb.com/api/v2/sql?format=GeoJSON&q="+ floodextentsQuery, function(data){
+    floodextents = L.geoJson(data,{
+      style: floodextentsStyle
+    });
+  });
+};
+
+$(document).ready(function(){
+  getsfha();
+  getsfha_proposed();
+  gethighhazard();
+  getfloodextents();
+});
+
+var sfhaLink = document.getElementById("sfhaLink");
+sfhaLink.onclick = function(e){
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (map.hasLayer(sfha)) {
+    map.removeLayer(sfha);
+    this.className = '';
+  } else {
+    map.addLayer(sfha);
+    this.className = 'active';
+  }
+};
+
+var sfha_proposedLink = document.getElementById("sfha_proposedLink");
+sfha_proposedLink.onclick = function(e){
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (map.hasLayer(sfha_proposed)) {
+    map.removeLayer(sfha_proposed);
+    map.removeLayer(highhazard);
+    this.className = '';
+  } else {
+    map.addLayer(sfha_proposed);
+    map.addLayer(highhazard);
+    this.className = 'active';
+  }
+};
+
+var floodextentsLink = document.getElementById("floodextentsLink");
+floodextentsLink.onclick = function(e){
+  e.preventDefault();
+  e.stopPropagation();
+
+  if (map.hasLayer(floodextents)) {
+    map.removeLayer(floodextents);
+    this.className = '';
+  } else {
+    map.addLayer(floodextents);
+    this.className = 'active';
+  }
+};
+
+var layers = document.getElementById('myNavmenu');
+
+waitLayer(L.mapbox.tileLayer('iconeng.2Mile_Contours'), 'Contours', 3);
+waitLayer(L.mapbox.tileLayer('iconeng.2mile_flo2d'), 'Flo2d Model', 0);
+
+
+function addLayer(layer, name, zIndex) {
+    layer
+        .setZIndex(zIndex)
+        .addTo(map);
+        
+        
+
+    // Create a simple layer switcher that
+    // toggles layers on and off.
+    var link = document.createElement('a');
+        link.href = '#';
+        link.className = 'active';
+        link.innerHTML = name;
+
+    link.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (map.hasLayer(layer)) {
+            map.removeLayer(layer);
+            this.className = '';
+        } else {
+            map.addLayer(layer);
+            this.className = 'active';
+        }
+    };
+
+    layers.appendChild(link);
+}
+
+function waitLayer(layer, name, zIndex) {
+    layer
+        .setZIndex(zIndex);
+        
+        
+
+    // Create a simple layer switcher that
+    // toggles layers on and off.
+    var link = document.createElement('a');
+        link.href = '#';
+        link.className = '';
+        link.innerHTML = name;
+
+    link.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (map.hasLayer(layer)) {
+            map.removeLayer(layer);
+            this.className = '';
+        } else {
+            map.addLayer(layer);
+            this.className = 'active';
+        }
+    };
+
+    layers.appendChild(link);
+}
+
+
+
+
+</script>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+<!--load jPushMenu, required-->
+<script src="js/jPushMenu.js"></script>
+
+<!--call jPushMenu, required-->
+<script>
+jQuery(document).ready(function($) {
+	$('.toggle-menu').jPushMenu();
+});
+</script>
+</body>
+</html>
