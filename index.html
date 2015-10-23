@@ -279,12 +279,21 @@ fieldset { width:240px;}
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiaWNvbmVuZyIsImEiOiJQVEItMndNIn0.OGqDLfQCZhMzdgYViGKHGw';
 
-var map = L.mapbox.map('map','iconeng.lmfhipka',{
+var map = L.mapbox.map('map',null,{
       infoControl: true,
       maxZoom:19
     })
       .addControl(L.mapbox.geocoderControl('mapbox.places-v1'))
       .setView([40.036,-105.283], 15);
+
+var layers = {
+      Dark: L.mapbox.tileLayer('iconeng.lmfhipka'),
+      Streets: L.mapbox.tileLayer('mapbox.streets'),
+      Satellite: L.mapbox.tileLayer('mapbox.satellite')
+  };
+
+  layers.Dark.addTo(map);
+  L.control.layers(layers).addTo(map);
 
 var sfha = null;
 var sfha_proposed = null;
